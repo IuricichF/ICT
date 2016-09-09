@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>MathJax TeX Test Page</title>
+  <script type="text/javascript" src="libs/jquery-min.js"></script>
+  <script type="text/javascript" src="libs/touchHover.js"></script>
+  <script type="text/javascript" src="scripts/navBar.js"></script>
+
+  <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <script type="text/x-mathjax-config"> MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML"></script>
+
+  <script type="text/javascript" src="libs/three.js"></script>
+</head>
+
+<body>
+
+  <div class="title">Persistent homology</div>
+  <div class="subtitle">An introduction via interactive examples</div>
+  <hr>
+
+  <div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <ul>
+      <li><a href="index.html"> Simplicial complexes and homology</a></li>
+      <li><a href="filtration.html">Filtrations and persistent homology</a></li>
+      <li><a href="algorithm.html">Standard algorithm</a></li>
+      <li><a href="otherWorks.html">State of the art</a></li>
+    </ul>
+  </div>
+
+
+  <span onclick="openNav()"><img width="30px" src="images/tableOfCont.png"/></span>
+
+  <div id="page">
+
+    <div class="intro">
+      In the previous section, we have introduced the concept of simplicial complex and simplicial homology.
+      As we have learned, simplicial homology describes the cycles present on a shape in a very precise way.
+      However, is when we are studying multiple objects, all with the same number of cycles, that the limitation of simplicial
+      homology appears. Homology is not sufficient for discriminating features within the same homology class. Persistent homology
+      has been defined for this purpose. Instead of analyzing the single object, persistent homology aims at analyzing the evolution of
+      such object under the effect of a filtering function. In this section, we are going to introduce the notions of filtration and persistent homology.
+    </div>
+
+  <h2 >Filtrations</h2>
+
+        <div id="myCaption">
+            <img src="images/filtration.png" width=100%></br>
+            <center>
+            Figure 1 - Function defined on the simplicial complex \(\Sigma\).
+        </div>
+        <p>
+          Let \(m\) be a natural number.
+          A <b><em>filtering function</em></b> is a function \(f:\Sigma\longrightarrow \{1, \dots, m\}\) such that,
+          for each \(k\)-simplex \(\sigma\) and each \(0\leq i\leq k\), it holds that \(f(\hat{\sigma}_i)\leq f(\sigma)\).
+          The filtering function \(f\) induces a nested sequence of simplicial complexes called <b><em>filtration</em></b> and denoted by \(\Sigma^f\)
+          $$
+            \Sigma^f\quad :\quad \emptyset=:\Sigma^{0}\subseteq\dots\subseteq\Sigma^{m}=\Sigma
+          $$
+          where, for each \(0\leq p\leq m\), the simplicial subcomplex \(\Sigma^{p}\) is defined by
+          $$
+            \Sigma^{p}:=\{ \sigma\in\Sigma\ |\ f(\sigma)\leq p \}
+          $$
+        </p>
+
+        <div class="lClass">
+          Use the following slide to filter the simplicial complex accordingly to the height function shown in Figure 1. The height of a simplex is defined as the maximum height value among its vertices.
+          Notice that, at each level of the filtration, the complex represented is always a simplicial complex.</br></br>
+
+          <div class="functionValues"></div>
+        </div>
+        <center>
+        <input type="range" min="0" max="3" value="0" oninput="outputUpdate(value)">
+        <div id="filtrContainer" align="center"> </div>
+        </center>
+        <script src="scripts/filtration.js"></script>
+
+        <h2 >Persistent homology</h2>
+
+        <p>
+          The main goal of persistent homology consists in studying the filtration and, in particular, tracking the homologies that appear and disapper.
+          Let us choose two parameters \(p\leq q\) of the filtration and a homology degree \(k\).
+
+          Since the filtration has nested complexes, we will have that
+
+            $$Z_k(\Sigma^{p})\subseteq Z_k(\Sigma^{q})$$
+
+          and
+
+            $$B_k(\Sigma^{p})\subseteq B_k(\Sigma^{q})$$
+
+          Moreover, we get induced a linear map \(i_k^{p,q}:H_k(\Sigma^{p})\longrightarrow H_k(\Sigma^{q})\)
+          between the two different homology spaces.
+        </p>
+
+        <p>
+            Given the filtration \(\Sigma^f\), the \((p,q)\)<b><em>-persistent</em></b> \(k\)-<b><em>homology space</em></b> is defined by
+            $$
+              H^{p,q}_k(\Sigma^f):=\mbox{Im}(i_k^{p,q})
+            $$
+
+            That is, \(H^{p,q}_k(\Sigma^f)\) is the subspace of \(H_k(\Sigma^{q})\) of the homology classes already born at parameter \(p\) which
+            persist at parameter \(q\).
+         </p>
+         <p>
+           A <b><em>persistence class</em></b> for a filtration \(\Sigma^f\) is a homology class \(h\) belonging to \(H_k(\Sigma^p)\)
+           for at least one parameter \(p\). We associate \(h\) with the smallest parameter \(p_h\) where it exists in the filtration and we say that \(h\)
+            is <em><b>born</b></em> at level \(p_h\).
+         </p>
+         <p>
+           By increasing parameter \(p\), the class \(h\) cannot split into two different classes since the complexes in \(\Sigma^f\) are nested.
+           However, \(h\) can possibly become equivalent to another class \(h'\) at same greater parameter in case some boundary between the two classes enters the filtration.
+         </p>
+         <p>
+           When \(h\) merges to \(h'\) at parameter \(q\), we say that the homology class <em><b>dies</b></em> at level \(q_h\).
+           Generally, we assume that the persistence class dying is the younger one.
+           In case \(p_h=p_{h'}\), both choices are allowed as long as one class dies and the other survives.
+           When a class \(h\) never dies, we assign \(q_h=\infty\).
+         </p>
+
+         <div class="lClass">
+           Visiting the filtration:
+
+           <ul>
+             <li>at level 1, we see that <font color="006600"><b>three classes</b></font> of 0-homology born;</li>
+             <li>at level 2, the <font color="b30000"><b>red class</b></font> dies merging with another one;</li>
+             <li>at level 3, no other classes die but a non-boundary <font color="006600"><b>1-cycle</b></font> born and it will never die.</li>
+           </ul>
+
+           Notice that the survived classes correspond to the homology of the final object.
+            </br></br>
+           <div class="levels"></div>
+         </div>
+
+         <center>
+         <input type="range" min="0" max="3" value="0" oninput="outputUpdate2(value)">
+         <div id="filtrHomology" align="center"> </div>
+         </center>
+         <script src="scripts/filtrationHomology.js"></script>
+
+
+         <h2 >Visualizing the persistence classes</h2>
+
+        <p>
+          Persistent homology features are represented by the <b><em>\(k\)-persistence diagram</em></b> Dgm\(_k(\Sigma^f)\).
+
+          The elements in Dgm\(_k(\Sigma^{f})\) are all the <b><em>persistence pairs</em></b> \((p_h,q_h)\) in \(\{0, \dots, m\}\times(\{0, \dots, m\}\cup\infty)\) for each persistence class \(h\) of homology degree \(k\) in the filtration \(\Sigma^f\).
+        </p>
+
+        <p>
+          Formally speaking, the persistent diagram is not a proper set since each element \((p,q)\) in Dgm\(_k(\Sigma^f)\) can possibly appears many times.
+
+          The <b><em>multiplicity</em></b> of a persistence pair \((p,q)\) is the number of different persistence classes \(h\) such that \((p_h,q_h)=(p,q)\).
+          Hence, the persistence diagram is a <b><em>multiset</em></b>.
+        </p>
+        <p>
+          In case \(q_h=\infty\), the class \(h\) is called <b><em>essential</em></b> since, in fact, it is part of the homology of \(\Sigma\).
+          For non-essential classes \(h\), the <b><em>persistence</b></em> is its own life duration, that is \(p_h-q_h\).
+          We visualize the persistence of a class in the persistence diagram as the distance of its respective point \((p_h,q_h)\)
+          from the diagonal \(\Delta:=\{ (p,q)\in\{0, \dots, m\}\times\{0, \dots, m\} \ |\ p=q \}\) in the \(\infty\)-norm.
+        </p>
+        <div class="lClass">
+          In the following figure, the graph of Dgm\(_0(\Sigma^f)\) is shown on the left.
+          It has two different persistence pairs.
+          The <a onmouseover="selectPoint(0)" onmouseout="selectPoint(-1)"><font color="002db3"><b>lower</b></font></a>
+          one has multiplicity 1 and persistence equal to 1.
+          The <a onmouseover="selectPoint(1)" onmouseout="selectPoint(-1)"><font color="002db3"><b>upper</b></font></a>
+          instead has multiplicity 2 and it is essential.
+          Notice that we are indicating essential persistence pairs with an y value equal to 4, since for that value of the filtering function \(\Sigma^4\) is already equal to \(\Sigma\).
+
+          On the right Dgm\(_1(\Sigma^f)\) is shown. It has only <a onmouseover="selectPoint(2)" onmouseout="selectPoint(-1)"><font color="002db3"><b>one</b></font></a> essential persistence pair whose persistence is 1.
+        </div>
+        <center>
+          <div id="firstGraph"></div>
+          <script src="scripts/persistenceDiagramTheory.js"></script>
+        </center>
+
+
+           <div class="hClass">
+             <p>Other tools have been proposed for representing persistent homology.</p>
+
+             <p>
+               <a class="link" href="http://www.ams.org/journals/bull/2008-45-01/S0273-0979-07-01191-3/" title="
+                  <em>Barcodes: the persistent topology of data</em>,</br>
+                  R. Ghrist,</br>
+                  Bulletin of the American Mathematical Society, vol. 45, pages 61-75, 2008.
+               ">Barcodes</a>
+              represent a different but equally intuitive way for visualizing peristence pairs.
+              Properly, a barcode is a graphical representation of the persistent homology of a filtered simplicial complex as a collection
+              of horizontal line segments obtained by considering each persistence pair \((p,q)\) as an interval.</p>
+
+             <p>Recently, a novel representation for the visualization of persistence pairs, called persistence landscape,
+             has been introduced. A
+             <a class="link" href="http://dl.acm.org/citation.cfm?id=2789272.2789275" title="
+                <em>Statistical Topological Data Analysis Using Persistence Landscapes</em>,</br>
+                P. Bubenik,</br>
+                J. Mach. Learn. Res., vol. 16, pages 77-102, January 2015.
+             ">persistence landscape</a>
+              is a representation halfway between the persistence diagram and the barcode.
+             It can be roughly considered as a horizontal version of the persistence diagram and it has been studied for better combining
+             topological data analysis with statistics and machine learning.</p>
+
+           </div>
+         </br></br>
+        <a href="algorithm.html">Next Section</a>
+    </div>
+
+</body>
+</html>

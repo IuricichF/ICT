@@ -1,0 +1,179 @@
+#page{
+  margin-top: 80px;
+  margin-left: 15%;
+  width:70%;
+  font-family: Arial;
+  text-align: justify;
+  text-justify: inter-word;
+  clear:both;
+  overflow-x: hidden;
+}
+
+#myCaption {
+    font-family: Arial;
+    float: right;
+    width: 25%;
+    margin: 0 0 15px 80px;
+    padding: 15px;
+    text-align: center;
+}
+
+.intro{
+  font-style: italic;
+  font-size: 120%;
+  margin: 0px 30px 80px;
+  font-family: "Book Antiqua", Palatino, serif;
+}
+
+.container{
+
+}
+
+.navbar{
+  float: left;
+}
+
+.title{
+  font-family: Sans-Serif;
+  margin-left: 3%;
+  font-size: 200%;
+}
+
+.subtitle{
+  font-family: Sans-Serif;
+  font-size: 150%;
+  margin-left: 3%;
+}
+
+
+a:link, a:visited, a:active {
+    color: #002080;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    color: #002080;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.lClass {
+  font-family: Sans-Serif;
+  background-color: #e6f2ff;
+  padding: 30px;
+}
+
+.hClass {
+  font-family: Sans-Serif;
+  background-color: #ffd6cc;
+  padding: 30px;
+}
+
+input[type=range] {
+  width: 80%; /* Specific width is required for Firefox. */
+}
+
+.column-left{ float: left; width: 45%; }
+.column-right{ float: right; width: 45%; }
+.matrix {
+    position: relative;
+}
+body {
+    padding: 20px;
+}
+.matrix:before, .matrix:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    border: 1px solid #000;
+    width: 6px;
+    height: 100%;
+}
+.matrix:before {
+    left: -6px;
+    border-right: 0px;
+}
+.matrix:after {
+    right: -6px;
+    border-left: 0px;
+}
+.matrix td {
+    padding: 5px;
+    text-align: center;
+}
+
+.table, .th, .td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+.th, .td {
+    padding: 5px;
+    text-align: center;
+}
+
+
+.tooltip
+{
+	position:absolute;
+	background-color:#eeeefe;
+	border: 1px solid #aaaaca;
+	font-size: smaller;
+	padding:4px;
+	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+	-webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+
+
+
+/* The side navigation menu */
+.sidenav {
+    height: 100%; /* 100% Full-height */
+    width: 0; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Stay on top */
+    top: 0;
+    left: 0;
+    background-color: #e6f2ff; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 20px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+
+/* The navigation menu links */
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover, .offcanvas a:focus{
+    color: #002080;
+}
+
+/* Position and style the close button (top right corner) */
+.closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px !important;
+    margin-left: 50px;
+}
+
+/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+#main {
+    transition: margin-left .5s;
+    padding: 20px;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+}

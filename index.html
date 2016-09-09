@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="import" href="/algorithm.html">
+  <title>MathJax TeX Test Page</title>
+
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+  tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+  </script>
+  <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full"></script>
+
+
+
+  <script type="text/javascript" src="libs/jquery-min.js"></script>
+  <script type='text/javascript' src='libs/touchHover.js'></script>
+  <script src="libs/three.js"></script>
+  <script src="scripts/navBar.js"></script>
+
+
+</head>
+<body>
+  <div class="title">Persistent homology</div>
+  <div class="subtitle">An introduction via interactive examples</div>
+  <hr>
+
+  <div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <ul>
+      <li><a href="index.html"> Simplicial complexes and homology</a></li>
+      <li><a href="filtration.html">Filtrations and persistent homology</a></li>
+      <li><a href="algorithm.html">Standard algorithm</a></li>
+      <li><a href="otherWorks.html">State of the art</a></li>
+    </ul>
+  </div>
+
+  <span onclick="openNav()"><img width="30px" src="images/tableOfCont.png"/></span>
+
+  <div id="page">
+
+    <div class="intro">
+      Persistent homology is one of the most important tools in computational topology. Using persistent homology, we can extract
+      topological features of a space at different spatial resolutions.
+      Persistent pairs are detected for identifying relevant features of the underlying space,
+      rather than artifacts of sampling, noise, or particular choice of parameters.
+
+      To find the persistent homology of a space, the space must first be represented as a simplicial complex.
+      In this section, we are going to introduce the notion of simplicial complex and the notion of simplicial homology,
+      a powerful tool for studying topological spaces that will reveal itself as fundamental for understanding
+      the information provided by persistent homology.
+    </div>
+
+
+    <h2 align="left">Simplicial complexes</h2>
+
+      <p>A \(k\)-dimensional <b><em>simplex</em></b> (\(k\)-simplex for short) is the convex hull \(v_0v_1\cdots v_k\) of \(k+1\) affinely independent points \(v_0, v_1, \dots,v_k\) in the Euclidean space \(\mathbb{R}^n\) which are called its <b><em>vertices</em></b>.
+        A <b><em>face</em></b> of \(\sigma=v_0\cdots v_k\) of a non-empty subset of the vertices of \(\sigma\).
+      </p>
+      <p>
+
+        A <b><em>simplicial complex</em></b> \(\Sigma\) is a finite collection of simplices such that:
+        <ul>
+          <li>every face of a simplex in \(\Sigma\) is still
+          part of \(\Sigma\), and</li>
+          <li>the intersection of any two simplices is either empty or a face of both.</li>
+        </ul>
+
+        <p>A \(d\)-dimensional complex (\(d\)-complex) is a complex such that the maximum of the dimensions of its simplices is \(d\).
+
+        We denote by \(\Sigma_k\) the set of all the \(k\)-simplices in \(\Sigma\).</p>
+
+        <div class="lClass">
+          The interactive example illustrates a simplicial complex composed by:
+          <ul>
+            <li> the 0-simplices in \(\Sigma_0\) <a onmouseover="overFunction(0)" onmouseout="overFunction(-1)"><font color="002db3">(also called vertices)</font></a>,</li>
+            <li> the 1-simplices in \(\Sigma_1\) <a onmouseover="overFunction(1)" onmouseout="overFunction(-1)"><font color="006600">(also called edges)</font></a>, and </li>
+            <li> the 2-simplices in \(\Sigma_2\) <a onmouseover="overFunction(2)" onmouseout="overFunction(-1)"><font color="b30000">(also called triangles)</font></a>. </li>
+          </ul>
+
+          Since the maximum dimension of its simplices is 2, the complex is a simplicial 2-complex. Looking at the only triangle in the complex, we see that its
+          <a onmouseover="overFunction(3)" onmouseout="overFunction(-1)"><font color="006600"><b>faces</b></font></a> are its three delimiting edges and their boundary vertices.
+          In a similar fashion, the <a onmouseover="overFunction(4)" onmouseout="overFunction(-1)"><font color="002db3"><b>faces</b></font></a> of an edge are
+          its boundary vertices.
+        </p>
+      </div>
+
+        <div id="simplComplContainer" align="center"> </div>
+        <script src="scripts/simplicialcomplex.js"></script>
+
+
+  <h2 align="left">Simplicial Homology</h2>
+
+      <p>
+        Homology aims at detecting \(k\)-dimensional holes in a shape, \(k\)-holes for short.
+        A \(k\)-hole is detected by collecting the \(k\)-simplices around it. So for example:
+
+        <ul>
+          <!-- <li>a $0$-hole is delimited by vertices in two different connected components and, thus, detects disconnections in the domain $\Sigma$.</li> -->
+          <li>a 0-hole is delimited a vertex in a connected components and, thus, the presence of 0-holes detects disconnections in \(\Sigma\);</li>
+          <li>a 1-hole is delimited by collections of edges around it, thus, detecting a loop;</li>
+          <li>a 2-hole will be delimited by collections of triangles around it, thus, detecting a void, and so on.</li>
+        </ul>
+      </p>
+
+        <div class="lClass">
+          The interactive example presents only two types of holes over the three that we can find on a 2-simplicial complex. In particular it has
+          two <a onmouseover="overFunction2(0)" onmouseout="overFunction2(-1)"><font color="002db3"><b>0-holes</b></font></a>, since it is formed by two
+          components
+
+          and one
+          <a onmouseover="overFunction2(1)" onmouseout="overFunction2(-1)"><font color="002db3"><b>1-hole</b></font></a>.
+      </div>
+
+        <div id="simplComplHoles" align="center"> </div>
+        <script src="scripts/simplicialHoles.js"></script>
+
+        <!-- There are possibly many combinations of simplices around a single hole. This motivates the need of the following algebraic machinary. -->
+
+        <p>In the following, we describe the algebraic formulation that allows for detecting holes. For each notion introduced, we will furnish the
+        corresponding geometrical example on our interactive figure.</p>
+
+        <p>The \(k\)-<b><em>chain</em></b> is the basic element we are going to consider.
+          A \(k\)-chain is a formal sum of \(k\)-simplices on \(\Sigma_k\).
+
+          The face relation among simplices induces a notion of boundary for \(k\)-chains.
+          The <b><em>boundary map</em></b> \(\partial_k:C_k(\Sigma)\longrightarrow C_{k-1}(\Sigma)\) is defined, over each simplex \(\sigma=v_0\cdots v_k\), by
+          $$
+          \partial_k(\sigma):=\hat{\sigma}_0+\dots+\hat{\sigma}_k, \qquad  \quad \mbox{ for } i=0,\dots,k
+          $$
+          where \(\hat{\sigma}_i\) is the convex hull of all vertices of \(\sigma\) but \(v_i\).
+          Then, \(\partial_k\) is extended to all \(k\)-chains by linearity and by removing each pair of simplices appearing twice.
+        </p>
+
+        <p>
+          Given a \(k\)-chain \(c\), its \((k-1)\)-<b><em>boundary</em></b> is \(\partial_k(c)\) and the the image of the map \(\partial_k\) is denoted by \(B_{k-1}(\Sigma)\).
+        </p>
+
+        <p>
+          Among all the possible chains on a simplicial complex, we want to recognize a specific type of chains.
+          A \(k\)-<b><em>cycle</b></em> is a \(k\)-chain \(c\) such that \(\partial_k(c)=0\). The kernel of \(\partial_k\) is denoted by \(Z_k(\Sigma)\).
+        </p>
+
+        <div class="lClass">
+          <p>In the following example, we can study different types of chains and boundaries. Lets consider the
+          <a onmouseover="overFunction3(0)" onmouseout="overFunction3(-1)"><font color="002db3"><b>1-chain</b></font></a> composed by a set of edges.
+          Its <a onmouseover="overFunction3(1)" onmouseout="overFunction3(-1)"><font color="002db3"><b>0-boundary</b></font></a> corresponds to the
+          set of vertices that appears as a face of an odd number of edges.</p>
+
+          <p>In this case, we have only one
+          <a onmouseover="overFunction3(2)" onmouseout="overFunction3(-1)"><font color="002db3"><b>2-chain</b></font></a> composed by a single triangle
+          and its <a onmouseover="overFunction3(3)" onmouseout="overFunction3(-1)"><font color="002db3"><b>1-boundary</b></font></a> is composed by
+          all its three edges.</p>
+
+          <p>Identifying the holes of an object means to discriminate between the cycles that are the boundary of some chain and those that are not.
+          As we already know, the <a onmouseover="overFunction3(4)" onmouseout="overFunction3(-1)"><font color="002db3"><b>1-chain</b></font></a> around the triangle
+          is a boundary, while the
+          <a onmouseover="overFunction3(5)" onmouseout="overFunction3(-1)"><font color="002db3"><b>1-chain</b></font></a>
+          around the hole is not. Notice that we may have multiple non-boundary
+          <a onmouseover="overFunction3(6)" onmouseout="overFunction3(-1)"><font color="002db3"><b>chains</b></font></a>
+          representing the same hole.</p>
+        </div>
+
+        <div id="simplChains" align="center"> </div>
+        <script src="scripts/chains.js"></script>
+
+
+        <p>It can be easily checked that \(B_k(\Sigma)\subseteq Z_k(\Sigma)\) by noticing that,
+        for each \((k+1)\)-simplex \(\sigma\), each simplex in \(\partial_k(\partial_{k+1}(\sigma))\) appears exactly an even number of times,
+        thus giving always a null contribute.</p>
+
+        <p>This allows us to define, the \(k\)<b><em>-homology space</em></b> of \(\Sigma\) as
+          $$
+            H_k(\Sigma):= \frac{Z_k(\Sigma)}{B_k(\Sigma)}
+          $$
+        </p>
+
+        <p>
+          The quotient over the \(k\)-boundaries avoids redundancies, thus letting all the possible \(k\)-chains around the same \(k\)-hole
+          to fall in the same homology class.
+        </p>
+
+        <p>
+          For any homology degree \(k\), it holds that \(H_k(\Sigma)\) is a finite dimensional vector space.
+          This means that the \(k\)-homology of a simplicial complex admits a finite basis of different \(k\)-homology classes \(h_1,\dots,h_{\beta_k}\) entirely expressing \(H_k(\Sigma)\).
+
+          In formulas,
+          $$
+            H_k(\Sigma)\cong \underbrace{\mathbb{Z}_2 \oplus\dots\oplus \mathbb{Z}_2}_{\beta_k \mbox{ copies of } \mathbb{Z}_2}
+          $$
+        <p>
+
+        The integer \(\beta_k\) indicates a homological invariant, which is called the \(k\)-<b><em>Betti number</em></b>.
+        Intuitively, \(\beta_k\) corresponds to the number of \(k\)-dimensional holes in the simplicial complex.
+
+
+        <div class="hClass">
+          <p>
+            <b>Theoretical basis.</b> Building the simplicial chains in the way we have described is formally referred as
+            build the chains by taking coefficients over \(\mathbb{Z}_2\). This is a common practice when working with simplicial homology in real applications
+            since, working with \(\mathbb{Z}_2\), makes calculations much easier.</p>
+          <p>
+            However, homology can be defined with coefficients in any Abelian group. The complete homological information uses \(\mathbb{Z}\)
+            as coefficient group, which is able of dealing with the presence of torsion in a shape. It can be proven (see
+            <a class="link" href="https://www.math.cornell.edu/~hatcher/AT/ATpage.html"
+            title="<em>Algebraic topology</em>, A. Hatcher, 2002.">[Hat02]</a>
+            , Chapter X)
+            that simplicial complexes embeddable in \(\mathbb{R}^3\) have no torsion and thus,
+            their \(\mathbb{Z}\)-homology groups reduce to \(\mathbb{Z}_2\)-homology.</p>
+        </div>
+      </br></br>
+
+
+        <a href="filtration.html">Next Section</a>
+ </div>
+</body>
+</html>

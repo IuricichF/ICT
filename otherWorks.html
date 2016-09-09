@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>MathJax TeX Test Page</title>
+  <script type="text/x-mathjax-config"> MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
+
+  <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type="text/javascript" src="libs/jquery-min.js"></script>
+  <script type="text/javascript" src="scripts/navBar.js"></script>
+  <script type='text/javascript' src='libs/touchHover.js'></script>
+
+
+</head>
+<body>
+  <div class="title">Persistent homology</div>
+  <div class="subtitle">An introduction via interactive examples</div>
+  <hr>
+
+  <div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <ul>
+      <li><a href="index.html"> Simplicial complexes and homology</a></li>
+      <li><a href="filtration.html">Filtrations and persistent homology</a></li>
+      <li><a href="algorithm.html">Standard algorithm</a></li>
+      <li><a href="otherWorks.html">State of the art</a></li>
+    </ul>
+  </div>
+
+  <!-- Use any element to open the sidenav -->
+  <span onclick="openNav()"><img width="30px" src="images/tableOfCont.png"/></span>
+
+
+  <div id="page">
+
+    <div class="intro">
+      Persistent homology is a really foundational tool that found uses in many applicative domains. Even though the way we presented it was focusing
+      on a simplicial complex and a filtering function defined on its vertices, the reader should be aware of the plethora of suitable input data that
+      can be considered as a filtration.
+      In the following, we describe the state of the art for what concern persistent homology. First, we will describe a non-exhaustive list of different datasets
+      that can be interpreted as a filtration.
+      Then, we will provide a list of the alternative algorithms that can be used to enhance the performances of the standard one. Also, we provide links to
+      the publicly available implementations.
+    </div>
+
+    <h2>Applications and datasets</h2>
+    <p>
+      The idea of filtration is a generalization of many types of data that we find in real applications.
+      In particular, we can think about filtrations as:
+
+      <ol>
+        <li>scalar fields defined on the vertices of a disrete object,</li>
+        <li>point clouds,</li>
+        <li>arbitrary filtrations.</li>
+      </ol>
+    </p>
+
+    <div id="myCaption">
+        <img src="images/hurricane.png" width=100%></br>
+        Figure 3 - A simulation of the Hurrican Isable.
+    </div>
+
+    </br></br>
+    <p>
+    <b>Scalar fields.</b>
+      When dealing with scalar fields, a function \(f\) is defined on the vertices of an input complex \(\Sigma\).
+      In such cases, the filtering function on \(\Sigma\) is obtained by assigning to each simplex of \(\Sigma\) the maximum among the values of its vertices.
+      Formally, given a simplex \(\sigma\) of \(\Sigma\), the function value \(f(\sigma)\) is usually defined as
+      \(max \{f(v) \,|\, v \text{ is a vertex of } \sigma\}\).</p>
+
+
+      <p>In practical applications, scalar fields are extremely common. The simplest examples of scalar fields are arguably the terrain datasets.
+      A terrain dataset can be considered as a planar triangulation where each point is defined by two coordinates.
+      The scalar function defined for each of theme is also called elevation in this case.
+
+      Volumetric images are other examples of scalar fields. These types of datasets can be described as point clouds immersed in the 3D space. The regular
+      distribution of the points naturally infers a topology on them. Volumetric images are common in medicine (3D TAC or MRI machines produces this kind of data)
+      or scientific simulations used in engineer or forecast analysis.
+
+
+      <div class="lClass">
+        Useful links to datasets:</br>
+        <ul>
+        <li><a href="http://visionair.ge.imati.cnr.it/ontologies/shapes/viewmodels.jsp">Aim@Shape </a>[Terrain and Volume data]</br></li>
+        <li><a href="http://vterrain.org">Virtual Terrain Project</a> [Terrain data]</br></li>
+        <li><a href="http://www9.informatik.uni-erlangen.de/External/vollib/">The Volume Library </a>[Volume data]</br></li>
+        <li><a href="http://vis.cs.ucdavis.edu/VisFiles/pages/meet.php">VIS UCDavis</a> [Volume data] (using one time-step at a time)</br></li>
+        <li><a href="http://www.vets.ucar.edu/vg/isabeldata/readme.html">Hurricane Isabel WRF Model Data </a> [Volume data] (using one time-step at a time)</br></li>
+        </ul>
+      </div>
+    </p>
+
+    </div>
+
+      <div align="center" text-align="center" style="font-family:Sans-Serif;">
+          <img src="images/terrain.png" width=40%></br>
+          Figure 4 - A terrain dataset analyzing using our visual <a href="https://github.com/IuricichF/VisualizePH">tool </a>.
+      </div>
+
+    <div id="page">
+
+
+      <div id="myCaption">
+          <img src="images/vr.png" width=100%></br>
+          Figure 5 - Filtration based on a distance function computed between pairs of points.
+      </div>
+
+      </br></br>
+    <p>
+      <b>Point clouds.</b>
+      Point cloud data are extremely common in the applications. Defined as set of points embedded in some space (possibly high dimensional), the analysis of
+point clouds is one of the most classical examples where persistent homology has been applied.</br></br>
+
+      When working with point clouds, the simplicial complex is built directly on the input data by defining a "distance" function.
+      One of the most famous approaches for defining such a complex is the Vietoris-Rips.</br></br>
+
+      The Vietoris-Rips complex at scale \(\epsilon\) is an abstract simplicial complex \(\Sigma\) obtained defining a distance function \(d(v_1,v_2)\) such that each simplex of \(\Sigma\) has
+      vertices that are pairwise within distance \(d(v_1,v_2) < \epsilon\).
+
+      In real applications, given the input point cloud, a sequence of growing simplicial complexes is built by incrementing the parameter \(\epsilon\). This creates
+      a filtration which homology changes can be studied using persistent homology. Actually,
+      the techniques used for building such a sequence are quite different, but all of them are based on an increasing distance value \(d\).
+      A connection between two distinct points is established once their distance is less than the threshold value \(d\).
+
+      Classical constructions that have to be mentioned are:
+      <ul>
+        <li> <b><a class="link" href="http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=1056714" title="
+          <em>On the Shape of a Set of Points in the Plane</em>,</br>
+          H. Edelsbrunner, D. G. Kirkpatrick, R. Seidel,</br>
+          in IEEE Transactions on Information Theory, vol. 29, no. 4, pp. 551-559, Jul 1983.">\(\alpha\)-shapes</a></b>, a first attempt of representing a set of points through a generalization of their convex hull;</li>
+
+        <li> <b><a class="link" href="http://people.cs.vt.edu/~sharathr/cech.pdf" title="
+          <em>Approximate &Ccaron;ech Complexes in Low and High Dimensions</em>,</br>
+          M. Kerber and R. Sharathkumar,
+          arXiv:1307.3272, 2013">&Ccaron;ech complexes</a></b>, the most classical procedure adopted in theory;</li>
+
+        <li> <b><a class="link" href="http://www.sciencedirect.com/science/article/pii/S0097849310000464" title="
+          <em>Fast construction of the Vietoris-Rips complex</em>,</br>
+          A. Zomorodian,  Computers & Graphics, Volume 34, Issue 3, June 2010,</br> Pages 263-271, ISSN 0097-8493
+          ">Vietoris-Rips complexes</a></b>, a practically-feasible approximation of the notion &Ccaron;ech complex;</li>
+
+        <li> <b><a class="link" href="http://dl.acm.org/citation.cfm?id=2386359" title="
+          <em>Topological Estimation Using Witness Complexes</em>,</br>
+          De Silva, Vin and Carlsson, Gunnar,</br>
+          In Proceedings of the First Eurographics conference on Point-Based Graphics (SPBG'04) Switzerland, pages 157-166.
+          ">Witness complexes</a></b>, a further and more practical approximation of the notion &Ccaron;ech complex.</li>
+      </ul>
+      All these methods implicitly produce a filtered simplicial complex. As before, the filtration value of a simplex is
+      usually defined as the maximum value assumed by its vertices.
+    </p>
+
+      <div class="lClass">
+        Useful links to datasets:
+        <ul>
+        <li><a href="http://archive.ics.uci.edu/ml/">UCI Machine Learning repository </a></li>
+        <li><a href="http://redwood-data.org/3dscan/">Redwood Object Scan Repository </a></li>
+        <li><a href="http://snap.stanford.edu">Stanford Network Analysis Project </a></li>
+        </ul>
+      </div>
+
+
+      </br></br>
+    <div class="hClass">
+      <b>Arbitrary filtrations.</b>
+      A third interesting class of filtrations is the one of the arbitrary filtrations. With this term, we want to denote filtrations
+      in which the filtration value assumed by a simplex is not determined by the values on its vertices. This class of filtrations is usually
+      related to a different and more theoretical point of view about persistent homology. Instead of considering persistent homology as a tool for analyzing the topological
+      features of a shape represented by a sequence of increasing simplicial complexes, one can interpret persistent homology as a tool for
+      describing a single map between two different simplicial complexes.
+      From this point of view, persistent homology allows studying the homological behavior of simplicial maps. In this context,
+      the simplical map under investigation is decomposed in terms of elementary and atomic modifications which give origin to a (non necessarily increasing) sequence of
+      simplicial complexes.
+    </div>
+
+</br></br></br>
+
+<h2>Other algorithmical approaches for computing persistent homology</h2>
+
+<p>
+In our description, we have focused our attention on the first algorithm defined in the literature for computing persistent homology.
+We have denoted it as the
+<a class="link" href="https://users.cs.duke.edu/~edels/Papers/2002-J-04-TopologicalPersistence.pdf" title="
+  <em>Topological persistence and simplification</em>,</br>
+  H. Edelsbrunner, D. Letscher, A. J. Zomorodian</br>
+  Discrete and Computational Geometry 28, Vol. 4 (2002), pages 511–533.
+">standard algorithm</a>.
+
+Its time complexity is potentially super-cubical in the number of the simplices of the simplicial complex \(\Sigma\) but, in practical cases,
+can be considered linear. Despite this, in the literature several approaches improving the described algorithm have been developed to compute homology and persistent homology.</br>
+Based on the strategy they adopt, we can subdivide the methods introduced in the literature to retrieve homological information into the following classes:
+  <ol>
+    <li> <b><em>direct optimizations</b></em>, </li>
+    <li> <b><em>distributed approaches</b></em>, </li>
+    <li> <b><em>methods based on annotations</b></em>. </li>
+</ol>
+
+1.  We refer as direct optimizations all those methods that improve the efficiency of the standard algorithm or that introduce new techniques,
+based on a matrix reduction, to compute the homological information.
+First of all, we have to mention that a generalization of the standard algorithm here presented has been proposed for computing persistent homology
+of a filtered simplicial complex with respect to any PID coefficient rings. A specific generalization has been defined for retrieving persistent
+homology with coefficients in a field. In this case, the computation is based on the detection of the structure of a graded module over a polynomial
+ring and it has revealed to be particularly effective.
+Several sequential optimizations of this algorithm have been proposed: by defining the notion of
+<a class="link" href="http://mrzv.org/publications/zigzags/socg09/" title="
+  <em> Zigzag persistent homology in matrix multiplication time.</em></br>
+  N. Milosavljevic, D. Morozov , P. Skraba,</br>
+  In Proceedings of the 27th Annual Symposium on Computational Geometry (2011), ACM, pp. 216–225.
+">zigzag persistent homology</a>,
+
+by using an <a class="link" href="https://people.mpi-inf.mpg.de/~mkerber/ck-phcwat-11.pdf" title="
+  <em>Persistent homology computation with a twist</em>,</br>
+  C. Chen, M. Kerber</br>
+  In Proceedings 27th European Workshop on Computational Geometry (2011).
+  ">output-sensitive algorithm</a>, by improving the running time thanks to a suitable change in the order of
+
+<a class="link" href="https://arxiv.org/abs/1107.5665" title="
+  <em>Dualities in persistent (co) homology.</em></br>
+  V. de Silva , D. Morozov,  M. Vejdemo-Johansson</br>
+  Inverse Problems 27, 12 (2011).
+">column reduction</a> or by investigating relations between persistent homology and cohomology thanks to the so-called
+<a class="link" href="http://dx.doi.org/10.1007/978-3-662-44777-2_16" title="
+  <em>Computing persistent homology with various coefficient fields in a single pass.</em></br>
+  J.-D. Boissonat , C. Maria,</br>
+  In Algorithms - ESA 2014, Schulz A., Wagner D., (Eds.), vol. 8737 of Lecture Notes in Computer Science. Springer Berlin Heidelberg, 2014, pp. 185-196.
+">dual algorithm</a>.
+</p>
+
+
+<p>
+2. Distributed approaches efficiently retrieve the homological information of a complex through parallel and distributed computations.
+Some of such approaches are based on a decomposition of the simplicial complex, while others act directly on the boundary matrices.
+In the literature, several methods have adopted such a distributed strategy: by using
+<a class="link" href="https://arxiv.org/abs/1112.1245" title="
+  <em>A spectral sequence for parallelized persistence</em>,</br>
+  D. Lipsky, P. Skraba, M. Vejdemo-Johansson,  CoRR abs/1112.1245 (2011).
+">spectral sequences</a>, by parallelizing a
+
+<a class="link" href="http://ieeexplore.ieee.org/xpl/articleDetails.jsp?tp=&arnumber=6799139" title="
+  <em>Efficient homology computations on multicore and manycore systems</em>,<br>
+  N. A. Murty, V. Natarajan, S. Vadhiyar,</br>
+  In High Performance Computing (HiPC), 2013 20th International Conference on (2013), IEEE, pp. 333-342.
+">coreduction-based algorithm</a>, by decomposing the boundary matrix in
+
+<a class="link" href="http://dx.doi.org/10.1007/978-3-319-04099-8_7" title="
+  <em>Clear and compress: Computing persistent homology in chunks.</em>,</br>
+  U. Bauer, M. Kerber, J. Reininghaus,</br>
+  In Topological Methods in Data Analysis and Visualization III, Mathematics and Visualization. Springer International Publishing, 2014, pp. 103-117.
+">chunks</a> or by exploiting a
+
+<a class="link" href="http://dl.acm.org/citation.cfm?id=2790178" title="
+  <em>Distributed computation of persistent homology</em>,</br>
+  U. Bauer, M. Kerber, J. Reininghaus,</br>
+  In ALENEX-14 (2014), pp. 31-38.
+">distributed memory environment</a>.
+</p>
+
+<p>
+3. Recently, a new strategy of computation is revealing very efficient. In this case, persistent homology is efficiently retrieved by the use of
+<a class="link" href="http://link.springer.com/chapter/10.1007%2F978-3-642-40450-4_59#page-1" title="
+  <em>The compressed annotation matrix: An efficient data structure for computing persistent cohomology,</em></br>
+  J.-D. Boissonat, T. K. Dey , C. Maria,</br>
+  In Algorithms-ESA 2013. Springer Verlag, 2013, pp. 695– 706.
+">annotations</a> which are vectors associated with each simplex of the complex encoding in a compact way the homology class of the simplex itself.
+</p>
+
+<p>
+  A different and fundamental subfield of methods studied for seeking of efficiency while computing persistent homology are the so-called, coarsening or
+  pruning approaches. These methods reduce the size of the input complex without changing its homological information by applying iterative simplifications,
+  and by computing the persistent homology when no more simplification is possible.
+  Some of these approaches are based on
+  <!-- <a class="link" href="http://link.springer.com/article/10.1007/s00454-008-9073-y" title="
+    <em>Coreduction homology algorithm.</em></br>
+    M. Mrozek ,B. Batko</br>
+    Discrete & Computational Geometry 41, 1 (2009), 96-118.
+  ">reductions</a> and
+
+  <a class="link" href="http://www.sciencedirect.com/science/article/pii/S0898122110007224" title="
+    <em>Coreduction homology algorithm for inclusions and persistent homology</em>,</br>
+    Mrozek M., Wanner T.</br>
+    Comput. Math. Appl. 60, 10 (Nov. 2010), 2812-2833.
+  ">coreductions</a>, others simplify the simplicial complex via -->
+  <a class="link" href="http://www.sciencedirect.com/science/article/pii/S0898122110007224" title="
+    <em>Coreduction homology algorithm for inclusions and persistent homology</em>,</br>
+    Mrozek M., Wanner T.</br>
+    Comput. Math. Appl. 60, 10 (Nov. 2010), 2812-2833.
+  ">reductions and coreductions</a>, others simplify the simplicial complex via
+
+  <a class="link" href="http://link.springer.com/chapter/10.1007%2F978-3-642-30238-1_13" title="
+    <em>Homology computations via acyclic subspace</em>,</br>
+    P. Brendel, P. Dlotko, M. Mrozek, N. Zelazna</br>
+    In Proceedings of the 4th international conference on Computational Topology in Image Context</br>
+    (Berlin, Heidelberg, 2012), CTIC-12, Springer Verlag, pp. 117-127.
+  ">acyclic subspaces</a> or by using
+
+  <a class="link" href="http://arxiv.org/abs/1304.0664" title="
+    <em>Edge contractions and simplicial homology</em>,</br>
+    T. K. Dey , A. N. Hirani, B. Krishnamoorthy, G. Smith,</br>
+    arXiv preprint arXiv:1304.0664 (2013).
+  ">edge contractions</a>. Similar approaches are based on the notion of
+
+  <a class="link" href="http://dl.acm.org/citation.cfm?id=1811004" title="
+    <em>The Tidy Set: a minimal simplicial set for computing homology of clique complexes</em>,</br>
+    Zomorodian A. J.</br>
+    In Proceedings of the 2010 Annual Symposium on Computational Geometry (2010), ACM, pp. 257-266.
+  ">tidy set</a>, a minimal simplicial set obtained trimming and thinning the original simplicial complex, or on the construction of the
+
+  <a class="link" href="http://link.springer.com/article/10.1007/s10208-013-9145-0" title="
+    <em>Discrete Morse theoretic algorithms for computing homology of complexes and maps</em>,</br>
+    S. Harker, K. Mischaikow, M. Mrozek, V. Nanda,</br>
+    Foundations of Computational Mathematics 14, 1 (2014), 151-184.
+  ">discrete Morse complex</a>, a compact model homologically-equivalent to the input complex.
+</p>
+
+<p>
+  <div class="lClass">
+    <h3 align="left">Software tools for computing persistent homology</h3>
+    Here, we are collecting the software tools for computing persistence homology that have been distributed in the public domain.</br></br>
+
+    Tools which directly work with the boundary matrices of a simplicial complex:
+    <ul>
+      <li><a href="http://javaplex.github.io">javaPlex </a> - standard algorithm;</li>
+      <li><a href="http://www-circa.mcs.st-and.ac.uk/~mik/persistence/">GAP persistence </a> - dual algorithm;</li>
+      <li><a href="http://www.mrzv.org/software/dionysus/">Dionysus </a> - by zigzag persistence optimization;</li>
+      <li><a href="https://bitbucket.org/phat-code/phat">PHAT </a> - collection of multimple optimized algorithms;</li>
+      <li><a href="https://github.com/DIPHA/dipha">DIPHA</a> - persistent homology groups computed based on a distributed computation;</li>
+      <li><a href="https://github.com/Ripser/ripser">RIPSER</a> - time and memory efficient algorithm computing also the Vietoris-Rips complex;</li>
+      <li><a href="http://www.inside-r.org/packages/cran/phom/docs/phom">PHOM</a> - standard and dual algorithm (implemented in R).</li>
+    </ul>
+    </br>
+    Tools based on the annotation vectors and on the Simplex Tree data structure:
+    <ul>
+      <li><a href="https://project.inria.fr/gudhi/">Gudhi</a>;</li>
+      <li><a href="http://web.cse.ohio-state.edu/~tamaldey/SimPers/Simpers.html">SimPers</a>.</li>
+    </ul>
+    </br>
+    Tools for reducing the size of the input complex without altering its
+    topological features:
+    <ul>
+      <li><a href="http://capd.sourceforge.net/capdRedHom/usage.php">RedHom </a> - based on reduction and coreduction operators;</li>
+      <li><a href="http://www.sas.upenn.edu/~vnanda/perseus/">Perseus </a> - based on discrete Morse theory.</li>
+    </ul>
+  </div>
+</p>
+
+
+
+  </div>
+</body>
+</html>

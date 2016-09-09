@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>MathJax TeX Test Page</title>
+  <script type="text/x-mathjax-config"> MathJax.Hub.Config({tex2jax: {inlineMath: [['\)','\)'], ['\\(','\\)']]}});</script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML"></script>
+
+  <script src="libs/three.js"></script>
+
+  <script type="text/javascript" src="libs/shCore.js"></script>
+  <script type="text/javascript" src="libs/shBrushCpp.js"></script>
+  <link type="text/css" rel="stylesheet" href="libs/shCoreDefault.css"/>
+  <link type="text/css" rel="Stylesheet" href="libs/shThemeDefault.css"/>
+  <script type="text/javascript">SyntaxHighlighter.all();</script>
+  <script type="text/javascript" src="scripts/navBar.js"></script>
+
+</head>
+<body>
+
+    <div class="title">Persistent homology</div>
+    <div class="subtitle">An introduction via interactive examples</div>
+    <hr>
+
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <ul>
+        <li><a href="index.html"> Simplicial complexes and homology</a></li>
+        <li><a href="filtration.html">Filtrations and persistent homology</a></li>
+        <li><a href="algorithm.html">Standard algorithm</a></li>
+        <li><a href="otherWorks.html">State of the art</a></li>
+      </ul>
+    </div>
+
+    <!-- Use any element to open the sidenav -->
+    <span onclick="openNav()"><img width="30px" src="images/tableOfCont.png"/></span>
+
+  <div id="page">
+
+
+    <div class="intro">
+      In the previous section, we have introduced the concept of filtration and persistent homology.
+      Here, we will describe the basic algorithm for computing persistent homology on a filtration.
+      A matrix representation is used for representing the boundary relations among all the simplices of the filtered simplicial complex.
+      The algorithm operates on such matrix for extracting all the persistence pairs that will be visualized through a graphical representation.
+    </div>
+
+    <h2>From a filtration to its boundary matrix</h2>
+
+  <p>
+  Let \(\Sigma^f\) be a filtration. In order to compute its persistent homology, we associate a matrix \(M\) to \(\Sigma^f\).
+  \(M\) is called <b><em>boundary matrix</em></b>, which encodes the boundary relationships between the simplices of \(\Sigma\).
+
+  <div id="myCaption">
+      <img src="images/filtration.png" width=100%></br>
+      <center>
+      Figure 2 - Original function defined on the simplicial complex \(\Sigma\).
+  </div>
+
+  First of all, let us consider a <b><em>total ordering</b></em> of the simplices of \(\Sigma\), i.e., a sequence \(\sigma_1, \sigma_2, \dots, \sigma_n\) of the simplices of \(\Sigma\) such that:
+  <ul>
+  <li>if \(f(\sigma_i)< f(\sigma_j)\), then \(i < j\);</li>
+  <li>if \(\sigma_i\) is a proper face of \(\sigma_j\), then \(i< j\).</li>
+  </ul>
+  The existence of such an ordering is ensured by the properties of \(f\).
+  Choosing a total ordering of the simplices of \(\Sigma\) naturally induces on \(\Sigma\) a filtering function \(f': \Sigma \rightarrow \{1, \dots n\}\) representing a "refinement" of the filtering function \(f\).
+</p>
+<p>
+  Imposing a total order on the simplices of \(\Sigma\) is a fundamental
+  step for constructing the boundary matrix and for applying the reduction algorithm.
+  From now on, we will call <b><em>original filtering function</b></em> the function \(f\) and <b><em>injective filtering function</b></em> the function \(f'\).
+  When building the injective filtering function, we are creating a 1-to-1 correspondence between each simplex of \(\Sigma\) and the levels of the filtrations itself.
+
+
+
+  Let us consider the filtration \(\Sigma^f\) depicted in Figure 2. A total ordering of its simplices can be defined as follows. Let \(\sigma\), \(\sigma'\) be two simplices of \(\Sigma\). We declair \(\sigma< \sigma'\) if and only if
+  <ul>
+  <li> \(f(\sigma)< f(\sigma')\), or </li>
+  <li> \(f(\sigma)=f(\sigma')\) and \(dim(\sigma)< dim(\sigma')\), or </li>
+  <li> \(f(\sigma)=f(\sigma')\), \(dim(\sigma)=dim(\sigma')\) and \(\sigma\) precedes \(\sigma'\) with respect the lexicographic order of their vertices. </li>
+  </ul>
+  <div class="lClass">
+  With respect to the example in Figure 2, a possible choice is:
+  $$v_0< v_1 < v_2 \\ < v_3 < v_4 < v_5 < v_6 < v_0 v_3 < v_1 v_5 < v_2 v_6 < v_3 v_4 < v_5 v_6 \\ < v_7 < v_8 < v_9 < v_{10} < v_3 v_7 < v_3 v_8 < v_4 v_8 < v_5 v_9 < v_6 v_{10} < v_7 v_8 < v_3 v_7 v_8$$
+
+  Notice that:
+  <ul>
+  <li> \(v_3 v_4 < v_7\) because \(f(v_3 v_4)< f(v_7)\); </li>
+  <li> \(v_5 < v_1 v_5\) because \(f(v_5)= f(v_1 v_5)\) and \(dim(v_5)< dim(v_1 v_5)\); </li>
+  <li> \(v_3 v_7 < v_3 v_8\) because \(f(v_3 v_7)= f(v_3 v_8)\), \(dim(v_3 v_7)= dim(v_3 v_8)\) and \(v_3 v_7\) precedes \(v_3 v_8\) with respect the lexicographic order of their vertices. </li>
+  </ul>
+  </p>
+    Use the following slider to play with the filtration. The image on the left will vary accordingly to the original filtering function \(f\) while the image on the right will be modified accordingly to the injective filtering function \)f'\). Notice that there are always moments where the two filtrations represent
+    the same simplicial complex.
+
+    <center>
+      <input type="range" min="0" max="23" oninput="outputUpdate(value)" value="0">
+      <div class="functionValues"></div>
+    </center>
+  </div>
+  <div id="filtrContainer" align="center"> </div>
+  <script src="scripts/filtrComparer.js"></script>
+
+
+<p> Given a total ordering of the simplices of \(\Sigma\), we can set up the corresponding boundary matrix \(M\). \(M\) is a square matrix of size \(n \times n\),
+  while its \((i, j)\) entries are defined to be
+  $$M_{i,j}:=\begin{cases} 1 & \text{ if } \sigma_i \text{ is a face of } \sigma_j \text{ such that } dim(\sigma_i)=dim(\sigma_j)-1 \\
+  0 & \text{ otherwise} \end{cases}$$
+
+
+</p>
+
+<p>In the following, we display the boundary matrix \(M\) associated with the filtration \(\Sigma^f\) depicted in Figure 2
+  with respect to the total ordering defined in the previous example. Empty entries correspond to null values.
+</p>
+
+    <figure>
+      <img src="images/Matrix.png" style="width:100%; align:center">
+    </figure>
+
+<p>Given a column index \(j\) of the boundary matrix \(M\), we define \(low(j)\) as the row index of the lowest \(1\) in a non-null column \(j\).
+  More formally, for each \(j\) in \(\{1, \dots, n\}\) such that column \(j\) is not null,
+    $$low(j):=max\{i \,|\, M_{i,j}\neq 0\}$$</p>
+
+<div class="lClass">
+<p><b>Example.</b> In the following, the values assumed by \(low\) for each non-null column of the boundary matrix \(M\) considered in the previous example:
+</p>
+<p>\(low(8)=4\),<br/>
+\(low(9)=6\),<br/>
+\(low(10)=low(12)=7\),<br/>
+\(low(11)=5\),<br/>
+\(low(17)=13\),<br/>
+\(low(18)=low(19)=low(22)=14\),<br/>
+\(low(20)=15\),<br/>
+\(low(21)=16\),<br/>
+\(low(23)=22\).</p>
+</div>
+
+<p>The persistent homology of a filtration \(\Sigma^f\) is computed by reducing the boundary matrix \(M\).</br>
+A matrix \(R\) is <b><em>reduced</b></em> if, for each pair of nun-null columns \(j_1\), \(j_2\), \(low(j_1)\neq low(j_2)\).
+Equivalently, \(R\) is reduced if the associated \(low\) function is injective on its domain of definition.
+</p>
+
+<h2>Standard algorithm</h2>
+
+<p>Algorithm <b><em>reduceMatrix</em></b> describes the procedure for transforming the boundary matrix \(M\) associated to a filetered simplicial complex \(\Sigma^f\)
+  into a reduced matrix \(R\)</p>
+
+
+  <div class="container">
+     <div class="column-left">
+       <pre class="brush: cpp;">
+       function reduceMatrix(Matrix M)
+       {
+         Matrix R= M;
+         for(int i = 0; i &#60; R.numColumn(); i++)
+         {
+           int j = sameLow(R,i);
+           while(j != NULL){
+             R.column(i) = (R.column(i) + R.column(j))%2;
+             j = sameLow(R);
+           }
+
+         }
+         return R;
+       }
+       </pre>
+     </div>
+     <div class="column-right">
+       <pre class="brush: cpp;">
+       function sameLow(Matrix R, int i)
+       {
+         for(int j = i; j &#62;= 0; j--)
+         {
+           if(R.low(i) == R.low(j))
+              return j;
+         }
+         return NULL;
+       }
+     </pre>
+     </div>
+  </div>
+  <div id="page"></div>
+
+
+<p>Given a boundary matrix \(M\), <b><em>reduceMatrix</em></b> considers, from left to right, the columns of \(M\).
+  If two columns \(j\) and \(j'\), with \(j'< j\), have the same value of \(low\), column \(j'\) is added to column \(j\) and \(low(j)\).
+  When no more columns on the left of \(j\) have \(low\) value equal to \(low(j)\), we process the next column.
+  Once all the columns of \(M\) have been considered, the resulting matrix \(R\) is reduced.
+</p>
+
+<div class="lClass">
+  Let us apply Algorithm <b><em>reduceMatrix</em></b> to the boundary matrix \(M\) of the filtration \(\Sigma^f\) considered in the previous examples.
+</div>
+
+<center>
+<div class="w3-content" style="max-width:800px;position:relative">
+
+<img class="mySlides" src="SlideShow/Step/Step.001.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.002.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.003.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.004.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.005.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.006.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.007.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.008.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.009.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.010.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.011.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.012.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.013.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.014.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.015.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.016.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.017.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.018.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.019.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.020.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.021.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.022.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.023.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.024.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.025.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.026.png" style="width:100%">
+<img class="mySlides" src="SlideShow/Step/Step.027.png" style="width:100%">
+
+<a class="w3-btn-floating" style="position:absolute;top:45%;left:0" onclick="plusDivs(-1)"><</a>
+<a class="w3-btn-floating" style="position:absolute;top:45%;right:0" onclick="plusDivs(1)">></a>
+
+</div>
+</center>
+
+<script>
+var slideIndex = 1;
+showDivs(slideIndex);
+
+function plusDivs(n) {
+  showDivs(slideIndex += n);
+}
+
+function showDivs(n) {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  if (n > x.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = x.length}
+  for (i = 0; i < x.length; i++) {
+     x[i].style.display = "none";
+  }
+  x[slideIndex-1].style.display = "block";
+}
+</script>
+
+
+
+<h2>Extracting persistence pairs from a reduced matrix</h2>
+
+<p>The reduced matrix provides all the information required for extracting the persistence pairs of \(\Sigma^f\). We recall that each persistence pair
+  is a pair of simplices representing two homology changes in the sublevel sets of function \(f\), in particular a newborn cycle and the death of
+  the same cycle. Persistence pairs are extracted using the algorithm <b><em>extractPairs</em></b>.
+
+  <pre class="brush: cpp;">
+  function extractPairs(Matrix R)
+  {
+    bool paired[R.numColumn()]; //array of Booleans, set to false
+    pair persPairs[]; //collection of pairs
+
+    for(int j = R.numColumn(); j &#62;= 0; j--)
+    {
+      if(paired[j]){
+        //the persistence pair has already been processed
+      }
+      else if(low(j)!=0){
+        //we have found a new persistence pair
+        persPairs.push(i,j);
+        paired[i]=true;
+        paired[j]=true;
+      }
+      else{
+        //we have found a cycle that is still alive
+        persPairs.push(j,infinity);
+      }
+    }
+    return pairs;
+  }
+  </pre>
+
+The obtained persistence pairs are of two kinds:
+
+<ul>
+<li> \((i, j)\), if there exists \(j\) such that \(low(j)=i\);</li>
+<li> \((i ,\infty)\), otherwise.</li>
+</ul>
+
+Given a pair \((i, j)\), it is possibile to associated with it a simplex pair \((\sigma_i, \sigma_j)\). Its first simplex is said to be <b><em>positive</b></em> while the second one is called <b><em>negative</b></em>.
+Recalling what described in the previous section, positive simplices are those responsible for the creation of an homology class during the filtration process.
+In a dual fashion, negative simplices are those responsible for the destruction of a non-boundary cycle. In particular, given a pair \((\sigma_i,\sigma_j)\),
+\(\sigma_j\) destroys the cycle created by \(\sigma_i\).
+
+Differently, a persistence pair \((i ,\infty)\) corresponds to the simplex pair \((\sigma_i,\infty)\). Such a pair represents a homology class that borns at the instant \(i\) thanks to the introduction of the positive simplex \(\sigma_i\) and persists along all the filtration.
+</p>
+
+<div class="lClass">
+  In the following example, we can study the information provided by each persistence pair projected directly on the original simplicial complex.
+  The graph on the left can be seen as a persistence diagram in which the persistence pairs of all the homology degrees are simultaneously depicted.
+  Each <font color="002db3"><b>blue point</b></font> on the graph represents a persistence pair.
+  Selecting a point of indices \((i, j)\) on the scatterplot graph, you can see, in the
+  figure on the right, the simplicial complex at level \(j\) (i.e., the level in the filtration at which the pair \((\sigma_i,\sigma_j)\) is created)
+  The two simplices involved in the pair are indicated with a <font color="006600"><b>green sphere</b></font> for the simplex that created the homology class, and a <font color="b30000"><b>red sphere</b></font>,
+  for the one responsible for its destruction.
+  In the figure on the right, we are also showing the homology classes that never die, depicted as three cubes. The two <font color="002db3"><b>blue cubes</b></font> represent
+  the two connected components that survive at the end of the filtration while the <font color="006600"><b>green cube</b></font> corrisponds to the 1-cycle.
+</div>
+
+<!-- <div class="container">
+   <div class="column-left">
+      <div id="plotDiv" ></div>
+     </pre>
+   </div>
+   <div class="column-right">
+     <div id="threeContainer"></div>
+   </div>
+
+</div>
+<div id="page"></div>
+<script src="scripts/persistenceDiagram.js"></script> -->
+
+<div id=firstGraph></div>
+<script src="scripts/persistenceDiagram.js"></script>
+<!-- <div id="page"></div> -->
+<p>
+  From a persistence diagram or from the graph shown above, it is not evident how to recognize the important information.
+  Moreover, the persistence pairs in the graph are numerous
+  even for such a small example. As it is, it would be hard to imagine this tool applied for the analysis of real data.
+  At the beginning of this section, we already discussed the differences between the original filtering function \(f\) and the injective filtering function \(f'\). Such
+  differences come into place also here, when analyzing results. The graph just shown describes the persistence pairs originated by the
+  injective filtering function \(f'\). However, we wanted to study function \(f\) and this can be done by slightly modifying algorithm <b><em>extractPairs</em></b> as follows.
+</p>
+
+<pre class="brush: cpp;">
+function extractPairs(Matrix R, float* function)
+{
+  bool paired[R.numColumn()]; //array of Booleans
+  pair persPairs[]; //collection of pairs
+
+  for(int j = R.numColumn(); j &#62;= 0; j--)
+  {
+    if(paired[j]){
+      //the persistence pair has already been processed
+    }
+    else if(low(j)!=0){
+      //we have found a new persistence pair
+      if(function[i]!=function[j])
+      {
+        persPairs.push(function[i],function[j]);
+      }
+      paired[i]=true;
+      paired[j]=true;
+    }
+    else{
+      //we have found a cycle that is still alive
+      persPairs.push(function[j],infinity);
+    }
+  }
+  return pairs;
+}
+</pre>
+
+Similarly to the previous case, each returned persistence pair \((p,q)\) corresponds to a simplex pair \((\sigma_i, \sigma_j)\) consisting of a positive and a negative simplex such that \((f(\sigma_i), f(\sigma_j))=(p, q)\). Its first simplex is said to be <b><em>positive</b></em> while the second one is called <b><em>negative</b></em>.
+Analogously, a persistence pair \((p ,\infty)\) corresponds to the simplex pair \((\sigma_i,\infty)\) such that \(f(\sigma_i)=p\) and represents an essential homology class that borns at the instant \(f(\sigma_i)\) while the positive simplex \(\sigma_i\) is introduced.
+</p>
+
+
+
+<div class="lClass">
+  In the following example, we give a visual representation of the persistent homology of \(\Sigma^f\).
+  On the left, a scatterplot graph representing the persistence pairs of \(\Sigma^f\) is depicted while, one the right, the information of the graph is projected on the simplicial complex \(\Sigma\).
+</div>
+
+<div id=secondGraph></div>
+<script src="scripts/persistenceDiagramCleaned.js"></script>
+
+
+
+<a href="otherWorks.html">Next Section</a>
+
+
+  </div>
+</body>
+</html>
